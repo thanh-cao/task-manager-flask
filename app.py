@@ -52,12 +52,12 @@ def login():
     if request.method == 'POST':
         # check if username exists in db
         existing_user = mongo.db.users.find_one(
-                        {'username': request.form.get('username').lower()}
-                        )
+            {'username': request.form.get('username').lower()}
+        )
         if existing_user:
             # check if hashed password matches user input
             if check_password_hash(
-                  existing_user['password'], request.form.get('password')):
+                    existing_user['password'], request.form.get('password')):
                 session['user'] = request.form.get('username').lower()
                 flash('Welcome, {}'.format(request.form.get('username')))
                 return redirect(url_for('profile', username=session['user']))
@@ -86,12 +86,17 @@ def logout():
 @app.route('/profile/<username>')
 def profile(username):
     username = mongo.db.users.find_one(
-      {'username': session['user']}
+        {'username': session['user']}
     )['username']
     # users record has username and password so speficy to get only username
     if session['user']:
         return render_template('profile.html', username=username)
     return redirect(url_for('login'))
+
+
+@app.route('/add_task')
+def add_task():
+    return render_template('add-task.html')
 
 
 if __name__ == '__main__':
